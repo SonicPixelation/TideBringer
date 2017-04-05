@@ -1,6 +1,5 @@
 package dev.sonicpixelation.tidebringer;
 
-import java.io.File;
 
 public class TideCore{
     private String[] args;

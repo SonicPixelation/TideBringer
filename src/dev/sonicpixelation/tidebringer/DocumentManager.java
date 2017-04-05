@@ -5,6 +5,7 @@ import org.w3c.dom.*;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -59,6 +60,8 @@ public class DocumentManager{
         //write the xml document
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         DOMSource source = new DOMSource(doc);
         StreamResult result = new StreamResult(new File(filename));
 
@@ -111,6 +114,8 @@ public class DocumentManager{
         }
 
         String hashCode = getTorrentHash(torrentURL);
+        if(hashCode == null)
+        {System.err.println("Bad URL"); throw new RuntimeException("Bad URL");}
         Element guid = doc.createElement("guid");
         guid.appendChild(doc.createTextNode(hashCode));
         newItem.appendChild(guid);
@@ -132,6 +137,8 @@ public class DocumentManager{
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         DOMSource source = new DOMSource(doc);
         StreamResult result = new StreamResult(new File(filename));
 
@@ -159,7 +166,7 @@ public class DocumentManager{
         }
         if(targetNode == null){
             System.err.println("there is no item with that Id\n");
-            throw new RuntimeException();
+            throw new RuntimeException("Missing Item Id");
         }
 
         NodeList childList = targetNode.getChildNodes();
@@ -170,22 +177,31 @@ public class DocumentManager{
             switch(tempName){
 
                 //basic cases
-                case "title"    : node.setTextContent(itemTitle);break;
-                case "guid"     : node.setTextContent(getTorrentHash(torrentUrl)); break;
+                case "title" : node.setTextContent(itemTitle);break;
 
-                //facny case with at
+
+                //facny cases
+                case "guid":
+                    String hashCode = getTorrentHash(torrentUrl);
+                    if(hashCode == null)
+                    { System.err.println("Bad URL"); throw new RuntimeException("Bad URL");}
+                    node.setTextContent(hashCode);
+                break;
+
+
                 case "enclosure":
                     NamedNodeMap nodeMap = node.getAttributes();
                     //url node
                     Node urlNode = nodeMap.getNamedItem("url");
                     urlNode.setNodeValue(torrentUrl);
-                    //the type node doesn't need to be changed
                     break;
             }
         }
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         DOMSource source = new DOMSource(doc);
         StreamResult result = new StreamResult(new File(filename));
 
@@ -217,6 +233,8 @@ public class DocumentManager{
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         DOMSource source = new DOMSource(doc);
         StreamResult result = new StreamResult(new File(filename));
 
@@ -252,7 +270,6 @@ public class DocumentManager{
             System.out.println("Hash: " + hash);
             return hash;
         }catch(Exception e){
-            e.printStackTrace();
             return null;
         }
     }
