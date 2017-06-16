@@ -2,9 +2,6 @@
 
 ![Alt text](/graphics/Tide_Bringer_plain.png?raw=true)
 
+TideBringer is a simple console based tool that can take torrent files and pack them into RSS feeds
 
-a simple java based tool to pack torrents to rss feeds for easy updating
-
-super early alpha
-
-TODO: build guides releases, and use guides
+currently inDEV
